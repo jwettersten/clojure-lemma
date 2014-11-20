@@ -1,22 +1,29 @@
 (ns project-lemma.server
   (:gen-class))
 
-(require '[clojure.java.io :as io])
+(require '[clojure.java.io :as io]
+         '[clojure.data.json :as json])
 (import '[java.net ServerSocket])
 
 (defn hello [name]
   (str "Hello, " name))
 
+(defn helloJSON [name]
+  (let [json-reader (json/read-str name :key-fn keyword)]
+    (let [greeting-name (get json-reader :name)]
+      (json/write-str {:greeting "Hello!" :greeting-name greeting-name}))))
+
 (defn receive
   "read a line of text data from the socket"
   [socket]
-  (.readLine (io/reader socket)))
+  (let [reader (io/reader socket)]
+    (json/read reader)))
 
 (defn send
   "echo the string back to the socket"
   [socket msg]
   (let [writer (io/writer socket)]
-    (.write writer msg)
+    (json/write msg writer)
     (.flush writer)))
 
 (defn serve-persistent [port handler]

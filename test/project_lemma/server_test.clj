@@ -3,5 +3,9 @@
             [project-lemma.server :refer :all]))
 
 (deftest test-hello
-  (testing "server exists"
+  (testing "hello"
            (assert (= (hello "jw") "Hello, jw"))))
+
+(deftest test-helloJSON
+  (testing "helloJSON"
+           (assert (= (helloJSON "{\"name\": \"jw\"}") "{\"greeting\":\"Hello!\",\"greeting-name\":\"jw\"}"))))

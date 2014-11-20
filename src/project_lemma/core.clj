@@ -6,4 +6,4 @@
 (defn -main
   "Serving via TCP..."
   [& args]
-  (server/serve-persistent 8888 #(.toUpperCase %)))
+  (server/serve-persistent 8888 #(.toLowerCase %)))
