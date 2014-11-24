@@ -6,9 +6,8 @@
 (deftest test-msg-payload-count-pass
          (testing "comparing byte count with actual payload size"
                  (let [test-json-reader (str "000042[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")]
-                       (assert (= true (parse-payload test-json-reader))))))
+                       (assert (= true (payload-match? test-json-reader))))))
 
-
-(deftest test-helloJSON
-  (testing "helloJSON"
-           (assert (= (helloJSON "{\"name\": \"jw\"}") "{\"greeting\":\"Hello!\",\"greeting-name\":\"jw\"}"))))
+(deftest test-extract-payload-values
+  (testing "JSON msg data extraction"
+           (assert (= (extract-payload-values (str "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")) (json/read-str "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")))))

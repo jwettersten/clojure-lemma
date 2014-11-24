@@ -26,17 +26,20 @@
          msg-payload-data (count (subs msg 6))]
       (if (= msg-length-count msg-payload-data) true false))
     (catch Exception e
-      (print e))))
+      (println e))))
+
+(defn extract-payload-values
+  [msg-payload-data]
+  (try
+    ; pull out the json key values into a map
+    (json/read-str msg-payload-data)
+    (catch Exception e
+      (println "Could not parse JSON message data: " e))))
 
 (defn parse-payload
   [msg]
   (try
     (let [msg-payload-data (subs msg 6)]
-      (if (payload-match? msg) true false))
+      (if (payload-match? msg) (extract-payload-values msg-payload-data) nil))
     (catch Exception e
-      (print e))))
-
-(defn helloJSON [name]
-  (let [json-reader (json/read-str name :key-fn keyword)]
-    (let [greeting-name (get json-reader :name)]
-      (json/write-str {:greeting "Hello!" :greeting-name greeting-name}))))
+      (println e))))
