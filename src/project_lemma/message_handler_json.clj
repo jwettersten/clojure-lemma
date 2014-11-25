@@ -44,4 +44,4 @@
     (let [msg-payload-data (subs msg 6)]
       (if (payload-match? msg) (extract-payload-message msg-payload-data) nil))
     (catch Exception e
-      (println e))))
+      (println "Failed parsing payload count: " e) nil)))

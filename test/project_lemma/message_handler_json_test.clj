@@ -3,6 +3,16 @@
             [clojure.data.json :as json]
             [project-lemma.message-handler-json :refer :all]))
 
+(deftest test-msg-parse-payload-mismatch
+         (testing "ensure nil response to non-matching payload count and data"
+                 (let [test-json-reader (str "000000[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")]
+                       (is (= nil (parse-payload test-json-reader))))))
+
+(deftest test-msg-parse-payload-exception
+         (testing "ensure parse payload fails gracefully"
+                 (let [test-json-reader (str "0")]
+                       (is (= nil (parse-payload test-json-reader))))))
+
 (deftest test-msg-payload-match-pass
          (testing "comparing byte count with actual payload size"
                  (let [test-json-reader (str "000042[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")]
