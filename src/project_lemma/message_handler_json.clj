@@ -26,20 +26,22 @@
          msg-payload-data (count (subs msg 6))]
       (if (= msg-length-count msg-payload-data) true false))
     (catch Exception e
-      (println e))))
+      (println "Could not perform payload comparison: " e) false)))
 
-(defn extract-payload-values
+(defn extract-payload-message
   [msg-payload-data]
   (try
-    ; pull out the json key values into a map
+    ; parse the message data using JSON and pass to message module
+    ; to determine the type of message
+    ; and return that new message type
     (json/read-str msg-payload-data)
     (catch Exception e
-      (println "Could not parse JSON message data: " e))))
+      (println "Could not parse JSON message data: " e) nil)))
 
 (defn parse-payload
   [msg]
   (try
     (let [msg-payload-data (subs msg 6)]
-      (if (payload-match? msg) (extract-payload-values msg-payload-data) nil))
+      (if (payload-match? msg) (extract-payload-message msg-payload-data) nil))
     (catch Exception e
       (println e))))
