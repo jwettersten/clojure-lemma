@@ -2,38 +2,21 @@
   (:gen-class))
 
 (require '[clojure.data.json :as json]
-         '[clojure.java.io :as io])
+         '[clojure.java.io :as io]
+         '[project-lemma.message :as msg-type])
 
-; json message handler
-; pass this into server to read and format messages
-; need to add exception handling here
-; validate length
-(defn read
-  [reader]
-  (.readLine reader))
-
-; message parser notes:
-; if (!message.equals("")) {
-;    Event event = MessageParser.parseEvent(message);
-;    filter.handle(event);
-; }
-;
-; 000042["event","guest1","topic1",[1,2,"potato"]]
 (defn payload-match?
   [msg]
   (try
     (let [msg-length-count (Integer/parseInt (subs msg 0 6))
          msg-payload-data (count (subs msg 6))]
-      (if (= msg-length-count msg-payload-data) true false))
+      (= msg-length-count msg-payload-data))
     (catch Exception e
       (println "Could not perform payload comparison: " e) false)))
 
-(defn extract-payload-message
+(defn create-payload-message
   [msg-payload-data]
   (try
-    ; parse the message data using JSON and pass to message module
-    ; to determine the type of message
-    ; and return that new message type
     (json/read-str msg-payload-data)
     (catch Exception e
       (println "Could not parse JSON message data: " e) nil)))
@@ -42,6 +25,21 @@
   [msg]
   (try
     (let [msg-payload-data (subs msg 6)]
-      (if (payload-match? msg) (extract-payload-message msg-payload-data) nil))
+      (if (payload-match? msg) (create-payload-message msg-payload-data) nil))
     (catch Exception e
       (println "Failed parsing payload count: " e) nil)))
+
+(defn read-payload-length
+  [reader]
+  (let [buffer (byte-array 6) n (.read reader buffer)]
+    (Integer/parseInt (String. buffer))))
+
+(defn read-payload
+  [reader length]
+  (let [buffer (byte-array (+ 6 length)) n (.read reader buffer)]
+    (String. buffer)))
+
+(defn read
+  [reader]
+  ; read the bytes, parse the payload, return message
+  (msg-type/message (parse-payload (read-payload [reader (read-payload-length reader)]))))

@@ -1,7 +1,24 @@
 (ns project-lemma.message-handler-json-test
   (:require [clojure.test :refer :all]
             [clojure.data.json :as json]
+            [clojure.java.io :as io :refer [file input-stream]]
             [project-lemma.message-handler-json :refer :all]))
+
+(deftest test-msg-reader-read-payload-length
+         (testing "reading in message byte length from reader"
+                  ; string stream vs. file input stream
+                  ; have json buffer the rest
+                  (with-open [in (input-stream (file "test/project_lemma/sample_event_message.txt"))]
+                       (is (= 42 (read-payload-length in))))))
+
+(deftest test-msg-reader-read-payload
+         (testing "reading in message byte length from reader"
+                  ; string stream vs. file input stream
+                  ; have json buffer the rest
+                  (with-open [in (input-stream (file "test/project_lemma/sample_event_message.txt"))]
+                    ;modify this to read the first 6 bytes
+                    ;
+                    (is (= "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]" (read-payload in 42))))))
 
 (deftest test-msg-parse-payload-mismatch
          (testing "ensure nil response to non-matching payload count and data"
@@ -28,10 +45,10 @@
                  (let [test-json-reader (str "000042event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")]
                        (is (= false (payload-match? test-json-reader))))))
 
-(deftest test-extract-payload-values
+(deftest test-create-payload-values
   (testing "JSON msg data extraction"
-           (is (= (extract-payload-message (str "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")) (json/read-str "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")))))
+           (is (= (create-payload-message (str "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")) (json/read-str "[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")))))
 
-(deftest test-extract-payload-values-fail
+(deftest test-create-payload-values-fail
   (testing "JSON msg data extraction"
-           (is (= (extract-payload-message (str "event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")) nil ))))
+           (is (= (create-payload-message (str "event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]")) nil ))))

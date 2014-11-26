@@ -3,14 +3,19 @@
 
 (require '[clojure.data.json :as json])
 
+; consider functions per type
 (defmulti message
   "Maps the message values to the appropriate message type"
-  (fn [msg-type-val payload-values] (:type msg-type-val)))
+  (fn [msg-payload] (first msg-payload)))
 
 (defmethod message "event"
-  [msg-type-val payload-values]
-  {:type (:type msg-type-val) :guest (get payload-values 1) :topic (get payload-values 2) :value (get payload-values 3)})
+  [[msg-type guest topic value]]
+  {:type msg-type :guest guest :topic topic :value value})
+
+(defmethod message "heartbeat"
+  [[msg-type guest]]
+  {:type msg-type :guest guest})
 
 (defmethod message :default
-  [msg-type-val payload-values]
+  [[]]
   nil)

@@ -27,6 +27,8 @@
                   (while @running
                     (with-open [sock (.accept server-sock)]
                       (let [msg-in (receive sock msg-handler)
+                            ; what returns should be a type of message (event, heartbeat, polo, etc)
+                            ; otherwise return nil
                             msg-out msg-in]
                         (send sock msg-out))))))
     running))
