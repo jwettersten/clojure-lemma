@@ -4,8 +4,6 @@
 (require '[project-lemma.server :as server]
          '[project-lemma.message-handler-json :as json-handler])
 
-;#(.toLowerCase %)
-
 (defn -main
   "Serving via TCP..."
   [& args]
