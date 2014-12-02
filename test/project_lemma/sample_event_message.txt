@@ -1,1 +1,0 @@
-000042["event","guest1","topic1",[1,2,"potato"]]

@@ -6,7 +6,7 @@
          '[project-lemma.message-handler-json :as json-handler])
 (import '[java.net ServerSocket])
 
-
+;credit o'reilly book tcpserver example
 (defn receive
   "read a line of text data from the socket"
   [socket msg-handler]
@@ -27,8 +27,6 @@
                   (while @running
                     (with-open [sock (.accept server-sock)]
                       (let [msg-in (receive sock msg-handler)
-                            ; what returns should be a type of message (event, heartbeat, polo, etc)
-                            ; otherwise return nil
                             msg-out msg-in]
                         (send sock msg-out))))))
     running))

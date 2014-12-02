@@ -5,41 +5,28 @@
          '[clojure.java.io :as io]
          '[project-lemma.message :as msg-type])
 
-(defn payload-match?
-  [msg]
+(defn read-payload-length
+  [reader]
   (try
-    (let [msg-length-count (Integer/parseInt (subs msg 0 6))
-         msg-payload-data (count (subs msg 6))]
-      (= msg-length-count msg-payload-data))
+    (let [buffer-string (String. (byte-array (take 6 (repeatedly #(.read reader)))))]
+      (Integer/parseInt buffer-string))
     (catch Exception e
-      (println "Could not perform payload comparison: " e) false)))
+      (println "Could not convert buffer length to Integer: " e) nil)))
 
-(defn create-payload-message
+(defn read-payload
+  [reader length]
+  (String. (byte-array (take length (repeatedly #(.read reader))))))
+
+(defn parse-payload
   [msg-payload-data]
   (try
     (json/read-str msg-payload-data)
     (catch Exception e
       (println "Could not parse JSON message data: " e) nil)))
 
-(defn parse-payload
-  [msg]
-  (try
-    (let [msg-payload-data (subs msg 6)]
-      (if (payload-match? msg) (create-payload-message msg-payload-data) nil))
-    (catch Exception e
-      (println "Failed parsing payload count: " e) nil)))
-
-(defn read-payload-length
-  [reader]
-  (let [buffer (byte-array 6) n (.read reader buffer)]
-    (Integer/parseInt (String. buffer))))
-
-(defn read-payload
-  [reader length]
-  (let [buffer (byte-array (+ 6 length)) n (.read reader buffer)]
-    (String. buffer)))
-
 (defn read
   [reader]
-  ; read the bytes, parse the payload, return message
-  (msg-type/message (parse-payload (read-payload [reader (read-payload-length reader)]))))
+ (try
+  (msg-type/message (parse-payload (read-payload reader (read-payload-length reader))))
+   (catch Exception e
+     (println "Could not return message: " e))))
