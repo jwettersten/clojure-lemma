@@ -6,7 +6,8 @@
          '[project-lemma.message-handler-json :as json-handler])
 (import '[java.net ServerSocket])
 
-;credit o'reilly book tcpserver example
+;Several components of this module were implemented from "Clojure Cookbook by Luke VanderHart and Ryan Neufeld (O’Reilly). Copyright 2014 Cognitect, Inc., 978-1-449-36617-9.”
+
 (defn receive
   "read a line of text data from the socket"
   [socket msg-handler]
