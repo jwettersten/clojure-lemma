@@ -1,10 +1,9 @@
 (ns project-lemma.core
   (:gen-class))
 
-(require '[project-lemma.server :as server]
-         '[project-lemma.message-handler-json :as json-handler])
+(require '[project-lemma.lemma :as lemma])
 
 (defn -main
-  "Serving via TCP..."
+  "Lemma standalone app entry point"
   [& args]
-  (server/serve-persistent 8888 json-handler/read))
+  (lemma/init [args]))
