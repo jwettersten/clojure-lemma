@@ -6,7 +6,7 @@
 
 (import '[java.io BufferedReader StringReader])
 
-(deftest test-msg-reader-read-payload-length
+(1deftest test-msg-reader-read-payload-length
          (testing "reading in message byte length from reader"
                   (let [in (BufferedReader. (StringReader. "000042[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]"))]
                     (is (= 42 (read-payload-length in))))))
@@ -28,3 +28,7 @@
          (testing "the complete read function"
                   (let [in (BufferedReader. (StringReader. "000042[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]"))]
                     (is (= {:type "event" :guest "guest1" :topic "topic1" :value [1 2 "potato"]} (project-lemma.message-handler-json/read in))))))
+
+(deftest test-create-event-msg
+         (testing "creating a json event message payload"
+                  (is (= (create-event-msg "guest1" "topic1" "don't panic") {:type "event" :guest "guest1" :topic "topic1" :value "dont' panic"}))))

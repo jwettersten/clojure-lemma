@@ -1,21 +1,19 @@
 (ns project-lemma.message
   (:gen-class))
 
-(require '[clojure.data.json :as json])
-
 ; consider functions per type
-(defmulti message
+(defmulti map-message-type
   "Maps the message values to the appropriate message type"
   (fn [msg-payload] (first msg-payload)))
 
-(defmethod message "event"
+(defmethod map-message-type "event"
   [[msg-type guest topic value]]
   {:type msg-type :guest guest :topic topic :value value})
 
-(defmethod message "heartbeat"
+(defmethod map-message-type "heartbeat"
   [[msg-type guest]]
   {:type msg-type :guest guest})
 
-(defmethod message :default
+(defmethod map-message-type :default
   [[]]
   nil)
