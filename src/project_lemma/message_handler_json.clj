@@ -25,12 +25,18 @@
     (catch Exception e
       (println "Could not parse JSON message data: " e) nil)))
 
-(defn read
+(defn read-msg-in
   [reader]
  (try
   (message/map-message-type (parse-payload (read-payload reader (read-payload-length reader))))
    (catch Exception e
      (println "Could not return message: " e))))
+
+(defn apply-topic-handler
+  "Attempt to map the incoming message to it's topic handler"
+  [msg-map topic-handlers]
+  (let [topic-handler (topic-handlers (msg-map :topic))]
+    (topic-handler (msg-map :topic) (msg-map :value))))
 
 (defn create-payload-length
   [msg]
