@@ -18,3 +18,10 @@
            (let [json-msg (json/read-str "[]")]
              (is (= (map-message-type json-msg) nil)))))
 
+(deftest test-create-event-msg
+         (testing "creating an event message payload"
+                  (is (= (create-event-message "guest1" "topic1" "don't panic") ["event" "guest1" "topic1" "don't panic"]))))
+
+(deftest test-create-registration-msg
+         (testing "creating a registration message payload"
+                  (is (= (create-registration-message "guest1" 4423 ["topic1" "topic2" "topic3"] [] "clojure" "1.6.0") ["register" "guest1" 4423 ["topic1" "topic2" "topic3"] [] "clojure" "1.6.0" nil]))))

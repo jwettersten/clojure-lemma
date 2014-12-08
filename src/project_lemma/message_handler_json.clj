@@ -37,12 +37,9 @@
   (let [byte-length-str (str (count msg))]
     (str (subs "000000" 0 (- 6 (count byte-length-str))) byte-length-str)))
 
-(defn create-event-msg
-  [lemma-id topic value]
-  (let [msg-payload (json/write-str ["event", lemma-id, topic, value])]
-    (str (create-payload-length msg-payload) msg-payload)))
+(defn package-message
+  "Prepares message for outbound communication to noam"
+  [msg]
+  (let [json-msg (json/write-str msg)]
+    (str (create-payload-length json-msg) json-msg)))
 
-(defn create-registration-msg
-  [lemma-id lemma-port hears-list speaks-list dialect lemma-version & options]
-  (let [msg-payload (json/write-str ["register", lemma-id, lemma-port, hears-list, speaks-list, dialect, lemma-version, options])]
-    (str (create-payload-length msg-payload) msg-payload)))

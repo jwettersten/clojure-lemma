@@ -23,8 +23,8 @@
       (loop [x 10]
           (when (> x 1)
             (send-function "topic4" "Don't panic.")
-            (send-function "topic5" "A towel.")
-            (send-function "topic6" "42.")
+            (send-function "topic5" "Bring a towel.")
+            (send-function "topic6" "The answer is 42.")
             (Thread/sleep 1000)
             (recur (- x 1)))))))
 
