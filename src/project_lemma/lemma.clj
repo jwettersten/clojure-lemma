@@ -1,18 +1,17 @@
 (ns project-lemma.lemma
   (:gen-class))
 
-(require '[project-lemma.server :as server]
+(require '[project-lemma.server :as tcp-server]
          '[project-lemma.message-handler-json :as json-handler]
          '[project-lemma.tcp-client :as tcp-client])
 
 (defn send-event
-  [lemma-id topic value]
-  (json-handler/create-event-msg lemma-id topic value))
+  [host port lemma-id topic value]
+  (tcp-client/send-message host port (json-handler/create-event-msg lemma-id topic value)))
 
 (defn init
-  [lemma-id listeners]
-  (server/serve-persistent 4423 json-handler/read)
-  (tcp-client/send-registration "127.0.0.1" 7733)
-  {:send-event (fn [topic value] (send-event lemma-id topic value)) :stop (fn [] ) }
- ;(println (send-event lemma-id topic value))
+  [lemma-id topic-listeners]
+  (tcp-server/serve 4423 json-handler/read topic-listeners)
+  (tcp-client/send-message "127.0.0.1" 7733 (json-handler/create-registration-msg "guest1" 4423 ["topic1" "topic2" "topic3"] [] "clojure" "1.6.0"))
+  {:send-event (fn [topic value] (send-event "127.0.0.1" 7733 lemma-id topic value)) :stop (fn [] ) }
   )

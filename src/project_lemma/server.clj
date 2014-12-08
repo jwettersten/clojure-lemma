@@ -21,7 +21,7 @@
     (json/write msg writer)
     (.flush writer)))
 
-(defn serve-persistent [port msg-handler]
+(defn serve [port msg-handler topics]
   (let [running (atom true)]
     (future
       (with-open [server-sock (ServerSocket. port)]

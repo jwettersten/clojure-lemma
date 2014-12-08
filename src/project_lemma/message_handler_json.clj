@@ -3,7 +3,8 @@
 
 (require '[clojure.data.json :as json]
          '[clojure.java.io :as io]
-         '[project-lemma.message :as message])
+         '[project-lemma.message :as message]
+         '[project-lemma.tcp-client :as sender])
 
 (defn read-payload-length
   [reader]
@@ -31,8 +32,17 @@
    (catch Exception e
      (println "Could not return message: " e))))
 
+(defn create-payload-length
+  [msg]
+  (let [byte-length-str (str (count msg))]
+    (str (subs "000000" 0 (- 6 (count byte-length-str))) byte-length-str)))
+
 (defn create-event-msg
   [lemma-id topic value]
-  ;need to dynamically build the json with the proper lenght of the payload
-  (str "000042[\"event\"," lemma-id "," topic "," value "]"))
+  (let [msg-payload (json/write-str ["event", lemma-id, topic, value])]
+    (str (create-payload-length msg-payload) msg-payload)))
 
+(defn create-registration-msg
+  [lemma-id lemma-port hears-list speaks-list dialect lemma-version & options]
+  (let [msg-payload (json/write-str ["register", lemma-id, lemma-port, hears-list, speaks-list, dialect, lemma-version, options])]
+    (str (create-payload-length msg-payload) msg-payload)))

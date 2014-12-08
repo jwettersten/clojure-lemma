@@ -6,7 +6,7 @@
 
 (import '[java.io BufferedReader StringReader])
 
-(1deftest test-msg-reader-read-payload-length
+(deftest test-msg-reader-read-payload-length
          (testing "reading in message byte length from reader"
                   (let [in (BufferedReader. (StringReader. "000042[\"event\",\"guest1\",\"topic1\",[1,2,\"potato\"]]"))]
                     (is (= 42 (read-payload-length in))))))
@@ -31,4 +31,12 @@
 
 (deftest test-create-event-msg
          (testing "creating a json event message payload"
-                  (is (= (create-event-msg "guest1" "topic1" "don't panic") {:type "event" :guest "guest1" :topic "topic1" :value "dont' panic"}))))
+                  (is (= (create-event-msg "guest1" "topic1" "don't panic") "000041[\"event\",\"guest1\",\"topic1\",\"don't panic\"]"))))
+
+(deftest test-create-payload-length
+         (testing "creation of the message payload count and 0 based formatting"
+                  (is (= "000041" (create-payload-length "[\"event\",\"guest1\",\"topic1\",\"don't panic\"]")))))
+
+(deftest test-create-registration-msg
+         (testing "creating a json registration message payload"
+                  (is (= (create-registration-msg "guest1" 4423 ["topic1" "topic2" "topic3"] [] "clojure" "1.6.0") "000081[\"register\",\"guest1\",4423,[\"topic1\",\"topic2\",\"topic3\"],[],\"clojure\",\"1.6.0\",null]"))))

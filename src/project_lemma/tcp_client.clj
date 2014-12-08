@@ -6,18 +6,18 @@
 (import '[java.io StringWriter]
         '[java.net Socket])
 
-(defn send-registration
-  "Sends registration message from lemma to noam host server"
-  [host port]
+(defn send-message
+  "Sends passed in message from lemma to noam host server"
+  [host port msg]
  (let [running (atom true)]
    (future
      (with-open [sock (Socket. host port)
                  writer (io/writer sock)
                  reader (io/reader sock)
                  response (StringWriter.)]
-       (.append writer "000076[\"register\",\"guest1\",4423,[\"topic1\",\"topic2\",\"topic3\"],[],\"clojure\",\"1.6.0\"]")
+       (.append writer msg)
        (.flush writer)
        (io/copy reader response)
        (str response)
-    ))))
+       ))))
 
