@@ -35,8 +35,8 @@
 (defn apply-topic-handler
   "Attempt to map the incoming message to it's topic handler"
   [msg topic-handlers]
-  (let [topic-handler (topic-handlers (msg :topic))]
-    (topic-handler (msg :topic) (msg :value))))
+  (let [{topic-handler :topic-handler topic :topic value :value} (assoc msg :topic-handler (topic-handlers (msg :topic)))]
+    (topic-handler topic value)))
 
 (defn create-payload-length
   [msg]
