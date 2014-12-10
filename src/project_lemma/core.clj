@@ -26,7 +26,7 @@
           (when (> x 1)
             (send-event "topic4" "Don't panic.")
             (send-event "topic5" "Bring a towel.")
-            (send-event "topic6" "The answer is 42.")
+            (send-event "topic6" 42)
             (Thread/sleep 1000)
             (recur (- x 1)))))))
 

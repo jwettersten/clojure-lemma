@@ -33,7 +33,7 @@
      (println "Could not return message: " e))))
 
 (defn apply-topic-handler
-  "Attempt to map the incoming message to it's topic handler"
+  "Map and call the relevant topic handler on the incoming message"
   [msg topic-handlers]
   (let [{topic-handler :topic-handler topic :topic value :value} (assoc msg :topic-handler (topic-handlers (msg :topic)))]
     (topic-handler topic value)))
