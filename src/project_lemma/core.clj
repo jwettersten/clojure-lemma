@@ -19,7 +19,9 @@
     (let [send-event (:send-event register)]
       ;Trap ctrl-c to handle shutting down the lemma
       (.addShutdownHook (Runtime/getRuntime)
-                        (Thread. (fn [] (println "Shutting down..."))))
+                        (Thread. (fn []
+                                   (println "shutting down...")
+                                   (lemma/shutdown (register :stop)))))
       (loop [x 10]
           (when (> x 1)
             (send-event "topic4" "Don't panic.")

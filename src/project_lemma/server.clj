@@ -6,7 +6,7 @@
          '[project-lemma.message-handler-json :as json-handler])
 (import '[java.net ServerSocket])
 
-;Components of this module were informed by or implemented from "Clojure Cookbook by Luke VanderHart and Ryan Neufeld (O’Reilly). Copyright 2014 Cognitect, Inc., 978-1-449-36617-9.”
+;Components of this module were informed by and/or implemented from "Clojure Cookbook by Luke VanderHart and Ryan Neufeld (O’Reilly). Copyright 2014 Cognitect, Inc., 978-1-449-36617-9.”
 
 (defn receive
   "retrieve incoming data from the socket"
@@ -18,8 +18,8 @@
   (let [running (atom true)]
     (future
       (with-open [server-sock (ServerSocket. port)]
-                  (while @running
-                    (with-open [socket (.accept server-sock)]
-                      (let [msg-in (receive socket msg-handler)]
-                        (json-handler/apply-topic-handler msg-in topic-handlers))))))
+        (while @running
+          (with-open [socket (.accept server-sock)]
+            (let [msg-in (receive socket msg-handler)]
+              (json-handler/apply-topic-handler msg-in topic-handlers))))))
     running))
