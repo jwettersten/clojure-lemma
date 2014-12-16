@@ -12,25 +12,25 @@
     (let [buffer-string (String. (byte-array (take 6 (repeatedly #(.read reader)))))]
       (Integer/parseInt buffer-string))
     (catch Exception e
-      (println "Could not convert buffer length to Integer: " e) nil)))
+      (println "Could not convert buffer length to Integer: " e) 0)))
 
 (defn read-payload
   [reader length]
-  (String. (byte-array (take length (repeatedly #(.read reader))))))
+  (if (> length 0) (String. (byte-array (take length (repeatedly #(.read reader))))) nil))
 
 (defn parse-payload
   [msg-payload-data]
-  (try
-    (json/read-str msg-payload-data)
-    (catch Exception e
-      (println "Could not parse JSON message data: " e) nil)))
+  (if-not nil (try
+                (json/read-str msg-payload-data)
+                (catch Exception e
+                  (println "Could not parse JSON message data: " e) nil))))
 
 (defn read-msg-in
   [reader]
- (try
-  (message/map-message-type (parse-payload (read-payload reader (read-payload-length reader))))
-   (catch Exception e
-     (println "Could not return message: " e))))
+ (if-not nil (try
+               (message/map-message-type (parse-payload (read-payload reader (read-payload-length reader))))
+               (catch Exception e
+                 (println "Could not return message: " e) nil))))
 
 (defn apply-topic-handler
   "Map and call the relevant topic handler on the incoming message"
