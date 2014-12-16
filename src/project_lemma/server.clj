@@ -15,11 +15,11 @@
        (msg-handler reader)))
 
 (defn serve [port msg-handler topic-handlers]
-  (let [running (atom true)]
+  (let [hearing (atom true)]
     (future
       (with-open [server-sock (ServerSocket. port)]
-        (while @running
+        (while @hearing
           (with-open [socket (.accept server-sock)]
             (let [msg-in (receive socket msg-handler)]
               (json-handler/apply-topic-handler msg-in topic-handlers))))))
-    running))
+    hearing))
