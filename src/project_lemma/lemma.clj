@@ -17,23 +17,22 @@
   (println "stopping lemma from hearing...")
   (println "speak soon!"))
 
-(defn setup-noam-connection
-  "Called once discovery is made to setup TCP services to begin communication with noam"
-  [polo-response]
-  (println "polo response: " polo-response)
-  )
+(defn locate-noam
+ [broadcast-ip broadcast-port lemma-name noam-room-name callback]
+  (def udp-socket (udp/create-udp-socket 0))
+  (let [locating (atom true)]
+    (udp/receive-discovery-loop udp-socket callback locating)
+     (while @locating
+       (udp/send-broadcast udp-socket (str "[\"marco\",\"" lemma-name "\",\"" noam-room-name "\",\"clojure\",\"0.1\"]") broadcast-ip broadcast-port)
+       (Thread/sleep 2000))
+   ))
 
 (defn init
-  [lemma-id topic-handlers]
-  ;first setup udp discovery broadcast
-  (def udp-socket (udp/create-udp-socket 0))
-  (def marco (udp/receive-discovery-loop udp-socket setup-noam-connection))
-  (while @marco
-    (udp/send-broadcast udp-socket "[\"marco\",\"guest1\",\"clojure-noam\",\"clojure\",\"1.6.0\"]" "127.0.0.1" 1030)
-    (Thread/sleep 2000)
-    (println "in marco loop...")
-    )
-;  (def hearing (tcp-server/serve 4423 json-handler/read-msg-in topic-handlers))
-;  (tcp-client/send-message "127.0.0.1" 7733 (json-handler/package-message (message/create-registration-message "guest1" 4423 (keys topic-handlers) [] "clojure" "1.6.0")))
-;  {:send-event (fn [topic value] (send-event "127.0.0.1" 7733 lemma-id topic value)) :stop [hearing]}
+  [lemma-id noam-ip noam-port topic-handlers]
+  ;setup "hearing" via tcp
+  (def hearing (tcp-server/serve 4423 json-handler/read-msg-in topic-handlers))
+  ;register lemma with noam via tcp
+  (tcp-client/send-message noam-ip noam-port (json-handler/package-message (message/create-registration-message lemma-id 4423 (keys topic-handlers) [] "clojure" "0.1")))
+  ;return event sending functions and shutdown "stop" handlers
+  {:send-event (fn [topic value] (send-event noam-ip noam-port lemma-id topic value)) :stop [hearing]}
   )

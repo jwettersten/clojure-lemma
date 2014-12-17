@@ -15,18 +15,26 @@
 
 (defn -main
   [& args]
-  (let [register (lemma/init "guest1" {"topic1" topic1-handler "topic2" topic2-handler "topic3" topic3-handler})]
-    (let [send-event (:send-event register)]
-      ;Trap ctrl-c to handle shutting down the lemma
-      (.addShutdownHook (Runtime/getRuntime)
-                        (Thread. (fn []
-                                   (println "shutting down...")
-                                   (lemma/shutdown (register :stop)))))
-      (loop [x 10]
-          (when (> x 1)
-            (send-event "topic4" "Don't panic.")
-            (send-event "topic5" "Bring a towel.")
-            (send-event "topic6" 42)
-            (Thread/sleep 1000)
-            (recur (- x 1)))))))
+  ; Locate noam
+  ; Stop sending marco messages
+  ; Setup and register lemma
+  ; Send test event messages for 10 seconds
+  (lemma/locate-noam "10.0.1.255" 1030 "guest1" "clojure-noam"
+                     (fn [[polo noam-name noam-port noam-ip] locating]
+                       (reset! locating false)
+                       (let [register (lemma/init "guest1" noam-ip noam-port {"topic1" topic1-handler "topic2" topic2-handler "topic3" topic3-handler})]
+                         (let [send-event (:send-event register)]
+                           ;Trap ctrl-c to handle shutting down the lemma
+                           (.addShutdownHook (Runtime/getRuntime)
+                                             (Thread. (fn []
+                                                        (println "shutting down...")
+                                                        (lemma/shutdown (register :stop)))))
+                           (loop [x 10]
+                             (when (> x 1)
+                               (send-event "topic4" "Don't panic.")
+                               (send-event "topic5" "Bring a towel.")
+                               (send-event "topic6" 42)
+                               (Thread/sleep 1000)
+                               (recur (- x 1))))))
+                       )))
 
