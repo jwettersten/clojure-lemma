@@ -21,5 +21,5 @@
         )
        ;Need to remove this with proper solution
         (io/copy reader response)
-        (str response))
-    ))
+        (str response)
+        )))

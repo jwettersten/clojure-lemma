@@ -26,29 +26,23 @@
 (defn receive
   "Block until a UDP message is received on the given DatagramSocket, and
       return the payload message as a string."
-  [^DatagramSocket socket loop-ref]
+  [^DatagramSocket socket]
   (let [buffer (byte-array 512)
         packet (DatagramPacket. buffer 512)]
     (.receive socket packet)
-    (def json-msg (json/read-str (String. (.getData packet) 0 (.getLength packet))))
+    (def json-polo-msg (json/read-str (String. (.getData packet) 0 (.getLength packet))))
     ;"[\"polo\", \"clojure-noam\",7733]"
-    (when (= (get json-msg 0) "polo")
-      (reset! loop-ref false)
-      json-msg
+    (when (= (get json-polo-msg 0) "polo")
+      (conj json-polo-msg (.getAddress packet))
       )))
-
-(defn parse-discovery
-  "Extract polo message from noam"
-  [msg-packet]
-  (println "packet received: " msg-packet))
 
 (defn receive-discovery-loop
   "Given a function and DatagramSocket, will (in another thread) wait
   for the socket to receive a message, and whenever it does, will call
   the provided function on the incoming message."
-  [socket callback]
+  [socket callback pinging]
   (let [discovery (atom true)]
     (future
       (while @discovery
-        (callback (receive socket discovery))))
-    discovery))
+        (callback (receive socket) pinging)))
+    ))
