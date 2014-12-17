@@ -1,32 +1,30 @@
-# project-lemma
+# cloure lemma
 
-FIXME: description
+This repository is a work-in-progress to create a lemma library to connect clojure applications to [noam-io](https://github.com/noam-io).
 
 ## Installation
 
-Download from http://example.com/FIXME.
+This lemma assumes an instance of the noam host server is installed and running. Follow the instructions at [noam-io](https://github.com/noam-io) to get started.
+
+This project requires the installation of java (currently only tested on 1.7 and higher) and clojure.
+
+Check your current version and update as necessary:
+
+    $ java -version
+
+The Leinengen clojure dependency management tool is being used to develop this lemma. You can learn more and install it from [Leinengen](http://leiningen.org/).
 
 ## Usage
 
-FIXME: explanation
+Once Leiningen has been installed, clone this repo:
 
-    $ java -jar project-lemma-0.1.0-standalone.jar [args]
+    $ git clone git@github.com:jwettersten/clojure-lemma.git
 
-## Options
+cd into the root project-lemma directory and run:
 
-FIXME: listing of options this app accepts.
+    $ lein trampoline run
 
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+'trampoline' causes 'lein' to exit it's java process once the clojure lemma process is up and running. 'trampoline' is recommended to ensure that ctrl-c triggers the lemma shutdown sequence on our lemma process vs. being caught by the running lein process.  
 
 ## License
 
