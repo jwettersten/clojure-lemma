@@ -23,10 +23,15 @@
 
 (defn create-event-message
   "Creates outbound event messages"
-  [lemma-id topic value]
-  ["event" lemma-id topic value])
+  [lemma-name topic value]
+  ["event" lemma-name topic value])
 
 (defn create-registration-message
   "Creates outbound registration message"
-  [lemma-id lemma-port hears-list speaks-list dialect lemma-version & options]
-  ["register" lemma-id lemma-port hears-list speaks-list dialect lemma-version options])
+  [lemma-name lemma-port hears-list speaks-list lemma-dialect lemma-version & options]
+  ["register" lemma-name lemma-port hears-list speaks-list lemma-dialect lemma-version options])
+
+(defn create-discovery-message
+  "Creates outbound marco discovery message"
+  [lemma-name noam-room lemma-dialect lemma-version]
+  ["marco" lemma-name noam-room lemma-dialect lemma-version])
