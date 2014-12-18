@@ -13,6 +13,10 @@
   [[msg-type guest]]
   {:type msg-type :guest guest})
 
+(defmethod map-message-type "polo"
+  [[msg-type noam-room port address]]
+  {:type msg-type :room-name noam-room :port port :ip address})
+
 (defmethod map-message-type :default
   [[]]
   nil)
