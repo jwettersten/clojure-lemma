@@ -35,7 +35,7 @@
     (udp/receive-discovery-loop udp-socket callback locating json-handler/parse-payload)
     ))
 
-(defn init
+(defn setup-communication
   [lemma-id noam-ip noam-port topic-handlers]
   ;setup "hearing" via tcp
   (def hearing (tcp-server/serve 4423 json-handler/read-msg-in topic-handlers))
@@ -44,3 +44,16 @@
   ;return event sending functions and shutdown "stop" handlers
   {:send-event (fn [topic value] (send-event noam-ip noam-port lemma-id topic value)) :stop [hearing]}
   )
+
+(defn start
+  [lemma-name noam-room topic-handlers speaking-function]
+  (locate-noam lemma-name noam-room
+               (fn [{polo :type, noam-name :room-name, noam-port :port, noam-ip :ip}]
+                 (let [register (setup-communication "guest1" noam-ip noam-port topic-handlers)]
+                         (let [send-event (:send-event register)]
+                           ;Trap ctrl-c to handle shutting down the lemma
+                           (.addShutdownHook (Runtime/getRuntime)
+                                             (Thread. (fn []
+                                                        (println "shutting down...")
+                                                        (shutdown (register :stop)))))
+                           (speaking-function send-event))))))
