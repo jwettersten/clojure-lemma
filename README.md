@@ -4,7 +4,7 @@ This repository is a work-in-progress to create a lemma library to connect cloju
 
 ## Installation
 
-This lemma assumes an instance of the noam host server is installed and running. Follow the instructions at [noam-io](https://github.com/noam-io) to get started.
+This lemma assumes an instance of the noam host server is installed and running. Follow the instructions at [noam-io](https://github.com/noam-io/host) to get noam up and running before running this lemma.
 
 This project also requires the installation of java (currently only tested on 1.7 and higher) and clojure (1.6.0).
 
