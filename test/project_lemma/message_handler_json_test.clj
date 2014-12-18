@@ -37,6 +37,10 @@
          (testing "creating a json event message payload"
                   (is (= (package-message ["event" "guest1" "topic1" "don't panic"]) "000041[\"event\",\"guest1\",\"topic1\",\"don't panic\"]"))))
 
+(deftest test-write-json
+         (testing "creating a json string from message vector"
+                  (is (= (write-json ["event" "guest1" "topic1" "don't panic"]) "[\"event\",\"guest1\",\"topic1\",\"don't panic\"]"))))
+
 (deftest test-create-registration-msg
          (testing "creating a json registration message payload"
                   (is (= (package-message ["register" "guest1" 4423 ["topic1" "topic2" "topic3"] [] "clojure" "1.6.0" nil]) "000081[\"register\",\"guest1\",4423,[\"topic1\",\"topic2\",\"topic3\"],[],\"clojure\",\"1.6.0\",null]"))))

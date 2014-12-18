@@ -43,9 +43,13 @@
   (let [byte-length-str (str (count msg))]
     (str (subs "000000" 0 (- 6 (count byte-length-str))) byte-length-str)))
 
+(defn write-json
+  "Converts msg into json string"
+  [msg]
+  (json/write-str msg))
+
 (defn package-message
   "Prepares message for outbound communication to noam"
   [msg]
-  (let [json-msg (json/write-str msg)]
+  (let [json-msg (write-json msg)]
     (str (create-payload-length json-msg) json-msg)))
-
