@@ -40,7 +40,7 @@
   ;setup "hearing" via tcp
   (def hearing (tcp-server/serve 4423 json-handler/read-msg-in topic-handlers))
   ;register lemma with noam via tcp
-  (tcp-client/send-message noam-ip noam-port (json-handler/package-message (message/create-registration-message lemma-id 4424 (keys topic-handlers) [] lemma-dialect lemma-version)))
+  (tcp-client/send-message noam-ip noam-port (json-handler/package-message (message/create-registration-message lemma-id 4423 (keys topic-handlers) [] lemma-dialect lemma-version)))
   ;return event sending functions and shutdown "stop" handlers
   {:send-event (fn [topic value] (send-event noam-ip noam-port lemma-id topic value)) :stop [hearing]}
   )
