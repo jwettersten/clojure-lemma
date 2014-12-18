@@ -22,13 +22,13 @@
 (defn -main
   [& args]
   ; Locate noam
-  ; Stop sending marco and listening for polo messages
   ; Setup and register lemma
   ; Send test event messages for 10 seconds
-  (lemma/locate-noam "10.0.1.255" 1030 "guest1" "clojure-noam"
-                     (fn [[polo noam-name noam-port noam-ip] locating receiving]
-                       (reset! locating false)
-                       (reset! receiving false)
+  ;
+  ; remove passing in broadcast ip 255.255.255.255 and 1030 - shame on me
+  ; locating, registering all needs to be encapsulated in lemma.
+  (lemma/locate-noam "255.255.255.255" 1030 "guest1" "clojure-noam"
+                     (fn [{polo :type, noam-name :room-name, noam-port :port, noam-ip :ip}]
                        (let [register (lemma/init "guest1" noam-ip noam-port {"topic1" topic1-handler "topic2" topic2-handler "topic3" topic3-handler})]
                          (let [send-event (:send-event register)]
                            ;Trap ctrl-c to handle shutting down the lemma
