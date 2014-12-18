@@ -5,23 +5,30 @@
 
 ; Define lemma n# of topic handlers
 (defn topic1-handler [topic value]
- (println "topic1-handler received " topic " with value: " value))
+  (def output (str "topic1-handler received " topic " with value: " value))
+  (println output)
+  output)
 
 (defn topic2-handler [topic value]
- (println "topic2-handler received " topic " with value: " value))
+  (def output (str "topic2-handler received " topic " with value: " value))
+  (println output)
+  output)
 
 (defn topic3-handler [topic value]
- (println "topic3-handler received " topic " with value: " value))
+  (def output (str "topic3-handler received " topic " with value: " value))
+  (println output)
+  output)
 
 (defn -main
   [& args]
   ; Locate noam
-  ; Stop sending marco messages
+  ; Stop sending marco and listening for polo messages
   ; Setup and register lemma
   ; Send test event messages for 10 seconds
   (lemma/locate-noam "10.0.1.255" 1030 "guest1" "clojure-noam"
-                     (fn [[polo noam-name noam-port noam-ip] locating]
+                     (fn [[polo noam-name noam-port noam-ip] locating receiving]
                        (reset! locating false)
+                       (reset! receiving false)
                        (let [register (lemma/init "guest1" noam-ip noam-port {"topic1" topic1-handler "topic2" topic2-handler "topic3" topic3-handler})]
                          (let [send-event (:send-event register)]
                            ;Trap ctrl-c to handle shutting down the lemma

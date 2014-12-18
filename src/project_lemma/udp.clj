@@ -15,7 +15,7 @@
 
 (defn send-broadcast
     "Broadcast marco discovery message via DatagramSocket to the specified
-      host and port."
+    host and port."
     [^DatagramSocket socket msg host port]
     (let [payload (.getBytes msg)
                   length (alength payload)
@@ -24,25 +24,25 @@
           (.send socket packet)))
 
 (defn receive
-  "Block until a UDP message is received on the given DatagramSocket, and
-      return the payload message as a string."
+  "Block until a UDP message is received and
+  test for noam polo to return"
   [^DatagramSocket socket]
   (let [buffer (byte-array 512)
         packet (DatagramPacket. buffer 512)]
     (.receive socket packet)
     (def json-polo-msg (json/read-str (String. (.getData packet) 0 (.getLength packet))))
-    ;"[\"polo\", \"clojure-noam\",7733]"
+    ;noam response will be: "[\"polo\", \"clojure-noam\",7733]"
     (when (= (get json-polo-msg 0) "polo")
       (conj json-polo-msg (.getAddress packet))
       )))
 
 (defn receive-discovery-loop
-  "Given a function and DatagramSocket, will (in another thread) wait
-  for the socket to receive a message, and whenever it does, will call
-  the provided function on the incoming message."
-  [socket callback pinging]
-  (let [discovery (atom true)]
+ "Continually monitor socket for incoming message via UDP
+ and forward callback function with handlers to this and marco locating loops
+ to be reset once registration process is complete"
+  [socket callback locating]
+  (let [receiving (atom true)]
     (future
-      (while @discovery
-        (callback (receive socket) pinging)))
+      (while @receiving
+        (callback (receive socket) locating receiving)))
     ))
