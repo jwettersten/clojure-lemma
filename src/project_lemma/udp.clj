@@ -1,7 +1,7 @@
 (ns project-lemma.udp
   (:gen-class))
 
-(require '[clojure.data.json :as json])
+(require '[project-lemma.message :as message])
 (import '[java.net DatagramSocket
           DatagramPacket
           InetSocketAddress])
@@ -26,23 +26,25 @@
 (defn receive
   "Block until a UDP message is received and
   test for noam polo to return"
-  [^DatagramSocket socket]
+  [^DatagramSocket socket udp-msg-handler]
   (let [buffer (byte-array 512)
         packet (DatagramPacket. buffer 512)]
     (.receive socket packet)
-    (def json-polo-msg (json/read-str (String. (.getData packet) 0 (.getLength packet))))
-    ;noam response will be: "[\"polo\", \"clojure-noam\",7733]"
-    (when (= (get json-polo-msg 0) "polo")
-      (conj json-polo-msg (.getAddress packet))
-      )))
+    (message/map-message-type (conj (udp-msg-handler (String. (.getData packet) 0 (.getLength packet))) (.getAddress packet)))
+    )
+  )
 
 (defn receive-discovery-loop
- "Continually monitor socket for incoming message via UDP
- and forward callback function with handlers to this and marco locating loops
- to be reset once registration process is complete"
-  [socket callback locating]
+ "Monitor socket for incoming message via UDP
+ forward polo messages to callback function
+ and stop (via reset) marco and polo message loops"
+  [socket callback locating udp-msg-handler]
   (let [receiving (atom true)]
-    (future
       (while @receiving
-        (callback (receive socket) locating receiving)))
-    ))
+        (def polo-msg (receive socket udp-msg-handler))
+        (when-not (nil? polo-msg)
+          (callback polo-msg)
+          (reset! locating false)
+          (reset! receiving false)
+          (.close socket))
+        )))
