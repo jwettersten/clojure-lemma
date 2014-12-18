@@ -16,7 +16,7 @@ The Leiningen clojure dependency management tool is being used to develop this l
 
 ## Usage
 
-Once Leiningen has been installed, clone this repo:
+Once you have noam, java and Leiningen installed, clone this repo:
 
     $ git clone git@github.com:jwettersten/clojure-lemma.git
 
@@ -24,7 +24,7 @@ cd into the root project-lemma directory and run:
 
     $ lein trampoline run
 
-'trampoline' causes 'lein' to exit it's java process once the clojure lemma process is up and running. 'trampoline' is recommended for use with running this lemma as it ensures that ctrl-c triggers the lemma shutdown sequence on our lemma process vs. being caught by the running lein process.  
+'trampoline' causes 'lein' to exit it's java process once the clojure lemma process is up and running. 'trampoline' is recommended for use with running this lemma as it ensures that ctrl-c triggers the lemma shutdown sequence on the lemma process vs. being caught by the running lein process.  
 
 To stop the clojure lemma use ctrl-c.
 
